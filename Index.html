@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ритм Синапса: Чистая Гармония</title>
+    <style>
+        :root {
+            --глубина-ночи: #020617;
+            --свет-небес: #00f2fe;
+            --зелень-мха: #98fb98;
+            --сияние: rgba(0, 242, 254, 0.4);
+            --текст-поток: #f1f5f9;
+            --дымка: rgba(148, 163, 184, 0.1);
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: var(--глубина-ночи);
+            color: var(--текст-поток);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden; touch-action: none;
+        }
+
+        .пространство {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 2rem; width: 90%; max-width: 400px; text-align: center;
+        }
+
+        .сфера-визуализация {
+            position: relative; width: 220px; height: 220px;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .ядро {
+            width: 50px; height: 50px;
+            background: var(--свет-небес);
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--сияние);
+            transition: all 5.5s ease-in-out;
+            z-index: 5; opacity: 0.4;
+        }
+
+        .ядро.вдох { transform: scale(3.8); opacity: 0.9; box-shadow: 0 0 80px var(--сияние); }
+        .ядро.выдох { transform: scale(1); opacity: 0.4; }
+
+        .орбита {
+            position: absolute; width: 100%; height: 100%;
+            border: 1px solid var(--дымка); border-radius: 50%;
+            animation: вращение 40s linear infinite;
+        }
+
+        @keyframes вращение { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .текст-поддержки { font-size: 1.1rem; min-height: 3rem; opacity: 0.8; transition: opacity 1s; }
+
+        .панель {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 1.5rem; border-radius: 25px;
+            backdrop-filter: blur(10px); width: 100%;
+            border: 1px solid var(--дымка);
+        }
+
+        button {
+            background: transparent; border: 1px solid var(--свет-небес);
+            color: var(--свет-небес); padding: 12px 35px;
+            border-radius: 50px; cursor: pointer; font-size: 1rem;
+            transition: all 0.3s; margin-bottom: 1rem; width: 100%;
+        }
+
+        button.active { background: var(--свет-небес); color: var(--глубина-ночи); }
+
+        .финал .ядро {
+            background: var(--зелень-мха);
+            box-shadow: 0 0 60px var(--зелень-мха);
+            transform: scale(1.8); opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="пространство" id="container">
+        <div class="сфера-визуализация">
+            <div class="орбита"></div>
+            <div class="ядро" id="ball"></div>
+        </div>
+        <div class="текст-поддержки" id="hint">Готовы войти в поток спокойствия?</div>
+        <div class="панель">
+            <button id="toggle">Начать практику</button>
+            <input type="range" id="vol" min="0" max="0.15" step="0.01" value="0.05" style="width:100%; accent-color: var(--свет-небес);">
+        </div>
+    </div>
+
+    <script>
+        let ctx, gain, noise;
+        let isRunning = false;
+        let cycles = 0;
+        const totalCycles = 5;
+
+        const ball = document.getElementById('ball');
+        const hint = document.getElementById('hint');
+        const btn = document.getElementById('toggle');
+        const volSlider = document.getElementById('vol');
+
+        function createNoise() {
+            ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const bufferSize = 2 * ctx.sampleRate,
+            buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate),
+            output = buffer.getChannelData(0);
+            
+            // Генерация мягкого розового шума
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+
+            const source = ctx.createBufferSource();
+            source.buffer = buffer;
+            source.loop = true;
+
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 400;
+
+            gain = ctx.createGain();
+            gain.gain.setValueAtTime(0, ctx.currentTime);
+
+            source.connect(filter).connect(gain).connect(ctx.destination);
+            source.start();
+        }
+
+        function step() {
+            if (!isRunning) return;
+
+            const isInhale = ball.className.includes('выдох') || ball.className === 'ядро';
+            ball.className = isInhale ? 'ядро вдох' : 'ядро выдох';
+            
+            hint.style.opacity = 0;
+            setTimeout(() => {
+                hint.innerText = isInhale ? "Глубокий вдох..." : "Медленный выдох...";
+                hint.style.opacity = 1;
+            }, 1000);
+
+            const targetVol = isInhale ? parseFloat(volSlider.value) : parseFloat(volSlider.value) * 0.2;
+            gain.gain.setTargetAtTime(targetVol, ctx.currentTime, 2);
+
+            if (!isInhale) cycles++;
+
+            if (cycles < totalCycles) {
+                setTimeout(step, 6000);
+            } else {
+                finish();
+            }
+        }
+
+        function finish() {
+            isRunning = false;
+            document.getElementById('container').classList.add('финал');
+            hint.innerText = "Гармония достигнута. Побудьте в этом состоянии.";
+            btn.style.display = 'none';
+            gain.gain.setTargetAtTime(0.01, ctx.currentTime, 5);
+        }
+
+        btn.addEventListener('click', () => {
+            if (!ctx) createNoise();
+            if (ctx.state === 'suspended') ctx.resume();
+
+            if (!isRunning) {
+                isRunning = true;
+                btn.innerText = "Прервать";
+                btn.classList.add('active');
+                step();
+            } else {
+                location.reload(); // Простой способ сбросить состояние
+            }
+        });
+    </script>
+</body>
+</html>
