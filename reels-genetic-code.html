@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REELS: GENETIC CODE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&family=JetBrains+Mono:wght@500;800&display=swap');
+
+        :root {
+            --bg-color: #050505;
+            --accent: #D4AF37;
+            --danger: #FF3B30;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #reels-container {
+            width: 100vw;
+            height: 100vh;
+            max-width: 450px;
+            max-height: 800px;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            border: 1px solid #222;
+        }
+
+        .scene {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+            text-align: center;
+        }
+
+        .scene.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .glitch {
+            font-weight: 900;
+            text-transform: uppercase;
+            position: relative;
+            text-shadow: 0.05em 0 0 rgba(255,0,0,0.75),
+                        -0.025em -0.05em 0 rgba(0,255,0,0.75),
+                        0.025em 0.05em 0 rgba(0,0,255,0.75);
+            animation: glitch 500ms infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .progress-bar-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            height: 3px;
+            display: flex;
+            gap: 5px;
+            z-index: 50;
+        }
+
+        .progress-segment {
+            flex: 1;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+        }
+
+        .industrial-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, #111 25%, transparent 25%), 
+                        linear-gradient(-45deg, #111 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #111 75%), 
+                        linear-gradient(-45deg, transparent 75%, #111 75%);
+            background-size: 20px 20px;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .btn-action {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: white;
+            color: black;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-action:active { transform: scale(0.95); }
+
+        .inn-badge {
+            background: var(--accent);
+            color: black;
+            padding: 5px 10px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="reels-container">
+        <!-- Progress Bar -->
+        <div class="progress-bar-container">
+            <div class="progress-segment"><div class="progress-fill" id="fill-0"></div></div>
+            <div class="progress-segment"><div class="progress-fill" id="fill-1"></div></div>
+            <div class="progress-segment"><div class="progress-fill" id="fill-2"></div></div>
+            <div class="progress-segment"><div class="progress-fill" id="fill-3"></div></div>
+        </div>
+
+        <!-- Scene 1: Hook -->
+        <div class="scene active" id="scene-0">
+            <div class="industrial-bg"></div>
+            <h2 class="text-zinc-500 mono text-xs mb-4 uppercase tracking-widest">Opтика: Вскрытие</h2>
+            <h1 class="text-6xl font-black mb-6 italic">«Я ПРИЕХАЛА С <span class="text-white underline">НУЛЕМ</span>»</h1>
+            <p class="mono text-sm text-zinc-400">Листай, чтобы увидеть реальность</p>
+        </div>
+
+        <!-- Scene 2: The Fact -->
+        <div class="scene" id="scene-1">
+            <div class="inn-badge mono">ИНН 761003787089</div>
+            <h2 class="text-4xl font-black mb-6 glitch">ЖЕЛЕЗОБЕТОННЫЙ ФУНДАМЕНТ</h2>
+            <p class="text-lg mb-4">Пока ты «дышишь маткой», папа строит Рыбинск с 2000-го года.</p>
+            <div class="w-full h-1 bg-zinc-800 my-4"></div>
+            <p class="mono text-xs text-zinc-500 uppercase">Дмитрий Беляков / Строительство / Металл</p>
+        </div>
+
+        <!-- Scene 3: The Gap -->
+        <div class="scene" id="scene-2">
+            <h2 class="text-3xl font-black mb-8 uppercase leading-none text-left w-full">ТВОЙ НУЛЬ<br><span class="text-red-500">≠</span><br>ЕЁ НУЛЬ</h2>
+            <div class="grid grid-cols-2 gap-4 w-full text-left">
+                <div class="border-l-2 border-zinc-700 pl-4">
+                    <p class="mono text-[10px] text-zinc-500">БАЗА</p>
+                    <p class="font-bold">ВШЭ / ЮРФАК<br>600К В ГОД</p>
+                </div>
+                <div class="border-l-2 border-red-500 pl-4">
+                    <p class="mono text-[10px] text-zinc-500">ХАЙП</p>
+                    <p class="font-bold">КОСЕНКО<br>ДОЛГ $1М</p>
+                </div>
+            </div>
+            <p class="mt-8 text-sm italic text-zinc-400">Династия — это когда один строит из бетона, а вторая из кода.</p>
+        </div>
+
+        <!-- Scene 4: CTA -->
+        <div class="scene" id="scene-3">
+            <h1 class="text-5xl font-black mb-2 glitch">СИСТЕМА > ХАЙП</h1>
+            <p class="mono text-zinc-400 mb-10 uppercase tracking-tighter">Хочешь видеть механизм, а не картинку?</p>
+            <div class="btn-action" onclick="resetReels()">Напиши «КОД»</div>
+            <div class="mt-6 mono text-[10px] text-zinc-600">СМЕЩЕНИЕ ОПТИКИ // 2026</div>
+        </div>
+
+        <!-- Navigation Buttons (Overlay) -->
+        <div class="absolute inset-y-0 left-0 w-1/4 z-40" onclick="prevScene()"></div>
+        <div class="absolute inset-y-0 right-0 w-1/4 z-40" onclick="nextScene()"></div>
+    </div>
+
+    <script>
+        let currentScene = 0;
+        const totalScenes = 4;
+        let progressInterval;
+        const sceneDuration = 5000; // 5 секунд на сцену
+
+        function updateScenes() {
+            document.querySelectorAll('.scene').forEach((s, i) => {
+                s.classList.toggle('active', i === currentScene);
+            });
+            
+            // Сброс всех полосок
+            for(let i = 0; i < totalScenes; i++) {
+                const fill = document.getElementById(`fill-${i}`);
+                if (i < currentScene) fill.style.width = '100%';
+                else if (i > currentScene) fill.style.width = '0%';
+            }
+            
+            startProgress();
+        }
+
+        function startProgress() {
+            clearInterval(progressInterval);
+            let start = Date.now();
+            const fill = document.getElementById(`fill-${currentScene}`);
+            
+            progressInterval = setInterval(() => {
+                let elapsed = Date.now() - start;
+                let percent = (elapsed / sceneDuration) * 100;
+                fill.style.width = percent + '%';
+                
+                if (elapsed >= sceneDuration) {
+                    nextScene();
+                }
+            }, 50);
+        }
+
+        function nextScene() {
+            if (currentScene < totalScenes - 1) {
+                currentScene++;
+                updateScenes();
+            } else {
+                // Остановка на последнем кадре
+                clearInterval(progressInterval);
+                document.getElementById(`fill-${currentScene}`).style.width = '100%';
+            }
+        }
+
+        function prevScene() {
+            if (currentScene > 0) {
+                currentScene--;
+                updateScenes();
+            }
+        }
+
+        function resetReels() {
+            currentScene = 0;
+            updateScenes();
+        }
+
+        window.onload = () => {
+            updateScenes();
+        };
+    </script>
+</body>
+</html>
